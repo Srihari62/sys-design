@@ -1,0 +1,76 @@
+from abc import ABC, abstractmethod
+
+
+class Product:
+    # Product class representing any item in eCommerce.
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+
+# 1. ShoppingCart: Only responsible for cart related business logic.
+class ShoppingCart:
+    def __init__(self):
+        self.products = []
+
+    def add_product(self, product):
+        self.products.append(product)
+
+    def get_products(self):
+        return self.products
+
+    def calculate_total(self):
+        return sum(p.price for p in self.products)
+
+
+# 2. ShoppingCartPrinter: Only responsible for printing invoices
+class ShoppingCartPrinter:
+    def __init__(self, cart: ShoppingCart):
+        self.cart = cart
+
+    def print_invoice(self):
+        print("Shopping Cart Invoice:")
+        for p in self.cart.get_products():
+            print(f"{p.name} - Rs {p.price}")
+        print(f"Total: Rs {self.cart.calculate_total()}")
+
+
+# Abstract class for persistence — Open/Closed Principle
+class Persistence(ABC):
+
+    @abstractmethod
+    def save(self, cart: ShoppingCart):
+        pass
+
+
+class SQLPersistence(Persistence):
+    def save(self, cart: ShoppingCart):
+        print("Saving shopping cart to SQL DB...")
+
+
+class MongoPersistence(Persistence):
+    def save(self, cart: ShoppingCart):
+        print("Saving shopping cart to MongoDB...")
+
+
+class FilePersistence(Persistence):
+    def save(self, cart: ShoppingCart):
+        print("Saving shopping cart to a file...")
+
+
+# Main Execution
+if __name__ == "__main__":
+    cart = ShoppingCart()
+    cart.add_product(Product("Laptop", 50000))
+    cart.add_product(Product("Mouse", 2000))
+
+    printer = ShoppingCartPrinter(cart)
+    printer.print_invoice()
+
+    db = SQLPersistence()
+    mongo = MongoPersistence()
+    file = FilePersistence()
+
+    db.save(cart)
+    mongo.save(cart)
+    file.save(cart)

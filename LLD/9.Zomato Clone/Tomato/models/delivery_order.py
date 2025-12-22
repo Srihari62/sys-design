@@ -1,0 +1,17 @@
+from models.order import Order
+
+
+class DeliveryOrder(Order):
+    def __init__(self):
+        super().__init__()
+        self.user_address = ""
+
+    def get_type(self) -> str:
+        return "Delivery"
+
+    # Getters and Setters
+    def set_user_address(self, address: str):
+        self.user_address = address
+
+    def get_user_address(self) -> str:
+        return self.user_address
